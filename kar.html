@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيد مبارك - معايدة الأصدقاء</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #1a0826 0%, #0f051d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Fireworks Canvas */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Container */
+        .card-container {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 215, 0, 0.1);
+            max-width: 90%;
+            width: 450px;
+            transition: transform 0.3s ease;
+            margin: 20px;
+        }
+
+        .card-container:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        /* Interactive Sheep Container */
+        .sheep-box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px auto;
+            cursor: pointer;
+        }
+
+        /* SVG Sheep Styling */
+        .sheep-svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sheep-box:hover .sheep-svg {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .sheep-box:active .sheep-svg {
+            transform: scale(0.95);
+        }
+
+        /* Message Balloon */
+        .balloon {
+            position: absolute;
+            top: -20px;
+            right: -30px;
+            background: #ffd700;
+            color: #1a0826;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.4);
+            animation: float 2s ease-in-out infinite;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .sheep-box:hover .balloon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1); }
+        }
+
+        /* Interactive Button */
+        .btn-fireworks {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.4);
+            transition: all 0.3s ease;
+            outline: none;
+            margin-top: 10px;
+        }
+
+        .btn-fireworks:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 65, 108, 0.6);
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        }
+
+        .btn-fireworks:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer info */
+        .footer-text {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Sound Note */
+        .audio-note {
+            font-size: 0.8rem;
+            color: #ff416c;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fireworks background -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- Main Card -->
+    <div class="card-container">
+        <h1>عيدكم مبارك!</h1>
+        <p class="subtitle">كل عام وأنتم بخير وبصحة وسلامة 🎉</p>
+
+        <!-- Interactive Sheep -->
+        <div class="sheep-box" onclick="triggerSheepAction(event)">
+            <div class="balloon">اضغط عليّ! 🐑</div>
+            <!-- Cute SVG Sheep -->
+            <svg class="sheep-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shadow -->
+                <ellipse cx="100" cy="175" rx="55" ry="10" fill="rgba(0,0,0,0.3)" />
+                <!-- Legs -->
+                <rect x="75" y="140" width="12" height="30" rx="6" fill="#1a1a1a" />
+                <rect x="113" y="140" width="12" height="30" rx="6" fill="#1a1a1a" />
+                <rect x="60" y="135" width="12" height="30" rx="6" fill="#2d2d2d" />
+                <rect x="128" y="135" width="12" height="30" rx="6" fill="#2d2d2d" />
+                <!-- Body (Wool) -->
+                <circle cx="100" cy="110" r="45" fill="#f5f5f5" />
+                <circle cx="75" cy="95" r="25" fill="#f5f5f5" />
+                <circle cx="125" cy="95" r="25" fill="#f5f5f5" />
+                <circle cx="70" cy="120" r="25" fill="#eaeaea" />
+                <circle cx="130" cy="120" r="25" fill="#eaeaea" />
+                <circle cx="100" cy="135" r="25" fill="#eaeaea" />
+                <!-- Head -->
+                <ellipse cx="100" cy="95" rx="25" ry="30" fill="#1a1a1a" />
+                <!-- Ears -->
+                <ellipse cx="73" cy="85" rx="12" ry="6" fill="#1a1a1a" transform="rotate(-15 73 85)" />
+                <ellipse cx="127" cy="85" rx="12" ry="6" fill="#1a1a1a" transform="rotate(15 127 85)" />
+                <!-- Eyes -->
+                <circle cx="92" cy="92" r="4" fill="#ffffff" />
+                <circle cx="92" cy="92" r="1.5" fill="#000000" />
+                <circle cx="108" cy="92" r="4" fill="#ffffff" />
+                <circle cx="108" cy="92" r="1.5" fill="#000000" />
+                <!-- Top Wool (Hair) -->
+                <circle cx="100" cy="65" r="14" fill="#f5f5f5" />
+                <circle cx="90" cy="68" r="10" fill="#f5f5f5" />
+                <circle cx="110" cy="68" r="10" fill="#f5f5f5" />
+            </svg>
+        </div>
+
+        <!-- Button to trigger fireworks -->
+        <button class="btn-fireworks" onclick="launchManualFireworks()">أطلق الألعاب النارية! 🚀</button>
+        
+        <p class="footer-text">اضغط على الخروف أو الزر لتجربة التفاعل الممتع ✨</p>
+    </div>
+
+    <!-- Web Audio API Context for interactive sounds without external files -->
+    <script>
+        // Web Audio Synthesis for Baaa and Fireworks sound effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSheepSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sawtooth';
+            // Mimic a funny sheep "Baaa"
+            osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.4);
+            
+            // Modulation to give it a "baa" texture
+            const mod = audioCtx.createOscillator();
+            const modGain = audioCtx.createGain();
+            mod.frequency.setValueAtTime(25, audioCtx.currentTime);
+            modGain.gain.setValueAtTime(15, audioCtx.currentTime);
+            
+            mod.connect(modGain);
+            modGain.connect(osc.frequency);
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            mod.start();
+            osc.start();
+            mod.stop(audioCtx.currentTime + 0.5);
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        function playExplosionSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const bufferSize = audioCtx.sampleRate * 0.5;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            // Create white noise
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.4);
+            
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            noise.start();
+            noise.stop(audioCtx.currentTime + 0.4);
+        }
+    </script>
+
+    <!-- Fireworks Engine Script -->
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let particles = [];
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 3 + 1;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+                this.gravity = 0.06;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+        }
+
+        function createFirework(x, y) {
+            const colors = ['#ffd700', '#ff416c', '#00f2fe', '#4facfe', '#00ff87', '#f9d423', '#ff4e50'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const particleCount = 60;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle(x, y, randomColor));
+            }
+            try { playExplosionSound(); } catch(e){}
+        }
+
+        function launchManualFireworks() {
+            const x = Math.random() * (canvas.width * 0.6) + (canvas.width * 0.2);
+            const y = Math.random() * (canvas.height * 0.4) + (canvas.height * 0.2);
+            createFirework(x, y);
+            
+            // Add secondary burst for extra flair
+            setTimeout(() => {
+                createFirework(x + (Math.random()*100 - 50), y + (Math.random()*100 - 50));
+            }, 200);
+        }
+
+        function triggerSheepAction(event) {
+            try { playSheepSound(); } catch(e){}
+            // Trigger fireworks exactly where or above the sheep box
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top;
+            
+            createFirework(x, y - 50);
+            
+            // Extra random fireworks
+            setTimeout(launchManualFireworks, 150);
+        }
+
+        // Automatic ambient fireworks
+        setInterval(() => {
+            if (Math.random() > 0.4) {
+                createFirework(
+                    Math.random() * canvas.width,
+                    Math.random() * (canvas.height * 0.6)
+                );
+            }
+        }, 1500);
+
+        function animate() {
+            ctx.fillStyle = 'rgba(26, 8, 38, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
